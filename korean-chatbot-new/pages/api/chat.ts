@@ -4,20 +4,70 @@ type Data = {
   reply: string;
 }
 
+interface GroqMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+// Current Groq models (as of April 2025)
+const GROQ_MODELS = {
+  FAST: 'llama3-8b-8192',       // Fastest model
+  BALANCED: 'llama3-70b-8192',  // Best balance
+  SMART: 'mixtral-8x7b-32768'   // (If still available)
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).end();
+    return res.status(405).json({ reply: 'Method not allowed' });
   }
 
   const { message } = req.body;
 
-  // Mock response - replace with actual API call if needed
-  const reply = message.includes('안녕') 
-    ? '안녕하세요! 어떻게 도와드릴까요?'
-    : '한국어 학습을 도와드릴게요. 더 구체적으로 질문해주세요.';
+  try {
+    const groqMessages: GroqMessage[] = [
+      {
+        role: 'system',
+        content: 'You are a helpful Korean language tutor. Respond in Korean unless explicitly asked to use English. Keep responses natural and conversational.'
+      },
+      {
+        role: 'user',
+        content: message
+      }
+    ];
 
-  res.status(200).json({ reply });
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: GROQ_MODELS.BALANCED, // Using recommended model
+        messages: groqMessages,
+        temperature: 0.7,
+        max_tokens: 1024,
+        stream: false
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Groq API Error Details:', errorData);
+      throw new Error(errorData.error?.message || 'Groq API error');
+    }
+
+    const data = await response.json();
+    const reply = data.choices[0]?.message?.content || '죄송합니다, 답변을 생성할 수 없습니다.';
+
+    return res.status(200).json({ reply });
+
+  } catch (error) {
+    console.error('Groq API Error:', error);
+    return res.status(500).json({ 
+      reply: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' 
+    });
+  }
 }
