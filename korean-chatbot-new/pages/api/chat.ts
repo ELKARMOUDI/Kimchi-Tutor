@@ -1,3 +1,4 @@
+// pages/api/chat.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = {
@@ -9,11 +10,10 @@ interface GroqMessage {
   content: string;
 }
 
-// Current Groq models (as of April 2025)
 const GROQ_MODELS = {
-  FAST: 'llama3-8b-8192',       // Fastest model
-  BALANCED: 'llama3-70b-8192',  // Best balance
-  SMART: 'mixtral-8x7b-32768'   // (If still available)
+  FAST: 'llama3-8b-8192',
+  BALANCED: 'llama3-70b-8192',
+  SMART: 'mixtral-8x7b-32768'
 };
 
 export default async function handler(
@@ -45,7 +45,7 @@ export default async function handler(
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: GROQ_MODELS.BALANCED, // Using recommended model
+        model: GROQ_MODELS.BALANCED,
         messages: groqMessages,
         temperature: 0.7,
         max_tokens: 1024,
@@ -55,7 +55,7 @@ export default async function handler(
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Groq API Error Details:', errorData);
+      console.error('Groq API Error:', errorData);
       throw new Error(errorData.error?.message || 'Groq API error');
     }
 
@@ -65,7 +65,7 @@ export default async function handler(
     return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error('Groq API Error:', error);
+    console.error('Error:', error);
     return res.status(500).json({ 
       reply: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' 
     });

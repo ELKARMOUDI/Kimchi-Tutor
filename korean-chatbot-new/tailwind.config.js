@@ -1,21 +1,18 @@
+// tailwind.config.js
 module.exports = {
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}"
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      animation: {
-        'message-pop': 'messagePop 0.3s ease-out',
-      },
-      keyframes: {
-        messagePop: {
-          '0%': { opacity: 0, transform: 'translateY(10px)' },
-          '100%': { opacity: 1, transform: 'translateY(0)' },
-        },
-      },
-    },
+      colors: {
+        gray: {
+          50: "#f9fafb" // This defines bg-gray-50
+        }
+      }
+    }
   },
   plugins: [],
 }
