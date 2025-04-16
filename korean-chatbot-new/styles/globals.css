@@ -29,3 +29,19 @@ body {
     transform: translateY(0);
   }
 }
+
+@layer components {
+  .sidebar-transition {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .header-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  }
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

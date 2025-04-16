@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { FiMenu, FiX } from 'react-icons/fi';
 
 interface Message {
   id: string;
@@ -27,14 +28,15 @@ const shouldRomanize = (message: string): boolean => {
   );
 };
 
-
 export default function ChatWindow() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [currentSession, setCurrentSession] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Initialize or load chats
   useEffect(() => {
@@ -56,6 +58,19 @@ export default function ChatWindow() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Close sidebar when clicking outside (mobile only)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (window.innerWidth < 768 && 
+          sidebarRef.current && 
+          !sidebarRef.current.contains(event.target as Node)) {
+        setIsSidebarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const startNewChat = () => {
     setMessages([]);
     const newSessionId = Date.now().toString();
@@ -75,14 +90,12 @@ export default function ChatWindow() {
     const session = chatSessions.find(s => s.id === sessionId);
     if (session) {
       setCurrentSession(sessionId);
-      // In a real app, you would load messages from storage/API
     }
   };
 
   const sendMessage = async () => {
     if (!inputValue.trim()) return;
-    const needsRomanization = shouldRomanize(inputValue); // ← 
- 
+    const needsRomanization = shouldRomanize(inputValue);
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -96,7 +109,6 @@ export default function ChatWindow() {
     setInputValue('');
     setIsLoading(true);
 
-    // Update chat session
     if (currentSession) {
       setChatSessions(prev => 
         prev.map(session => 
@@ -143,9 +155,24 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
+    <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
+      {/* Sidebar - Now properly hidden when closed */}
+      <div
+        ref={sidebarRef}
+        className={`fixed z-20 w-64 bg-gray-800 border-r border-gray-700 flex flex-col transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ height: '100vh' }}
+      >
+        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Chat History</h2>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="text-gray-400 hover:text-white"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
         <div className="p-4 border-b border-gray-700">
           <button 
             onClick={startNewChat}
@@ -158,7 +185,10 @@ export default function ChatWindow() {
           {chatSessions.map(session => (
             <div
               key={session.id}
-              onClick={() => loadChat(session.id)}
+              onClick={() => {
+                loadChat(session.id);
+                if (window.innerWidth < 768) setIsSidebarOpen(false);
+              }}
               className={`p-3 border-b border-gray-700 cursor-pointer hover:bg-gray-700 ${
                 currentSession === session.id ? 'bg-gray-700' : ''
               }`}
@@ -174,11 +204,21 @@ export default function ChatWindow() {
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Chat Area - Removed md:relative and adjusted width */}
+      <div className="flex-1 flex flex-col w-full">
         {/* Header */}
-        <header className="bg-gray-800 border-b border-gray-700 p-4">
-          <h1 className="text-xl font-semibold">한국어 챗봇 튜터</h1>
+        <header className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 shadow-md">
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="mr-4 text-white"
+            >
+              <FiMenu size={24} />
+            </button>
+            <h1 className="text-2xl font-bold text-white tracking-tight">
+              한국어 챗봇 튜터
+            </h1>
+          </div>
         </header>
 
         {/* Messages */}
