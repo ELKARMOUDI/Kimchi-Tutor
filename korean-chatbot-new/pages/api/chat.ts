@@ -1,4 +1,3 @@
-// pages/api/chat.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = {
@@ -11,9 +10,13 @@ interface GroqMessage {
 }
 
 const GROQ_MODELS = {
-  FAST: 'llama3-8b-8192',
-  BALANCED: 'llama3-70b-8192',
-  SMART: 'mixtral-8x7b-32768'
+  BALANCED: 'llama3-70b-8192'
+};
+
+// Helper to detect if text contains Korean
+const containsKorean = (text: string): boolean => {
+  const koreanRegex = /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/;
+  return koreanRegex.test(text);
 };
 
 export default async function handler(
@@ -25,12 +28,20 @@ export default async function handler(
   }
 
   const { message } = req.body;
+  const isKorean = containsKorean(message);
 
   try {
+    const systemPrompt = isKorean
+      ? `You are a Korean tutor. Respond naturally in Korean (Hangul). Keep responses warm and helpful.`
+      : `You are a Korean tutor. When users speak English:
+         1. First answer in English
+         2. Then provide the Korean translation in parentheses
+         3. Example: "Hello (안녕하세요)"`;
+
     const groqMessages: GroqMessage[] = [
       {
         role: 'system',
-        content: 'You are a helpful Korean language tutor. Respond in Korean unless explicitly asked to use English. Keep responses natural and conversational.'
+        content: systemPrompt
       },
       {
         role: 'user',
@@ -53,21 +64,18 @@ export default async function handler(
       }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Groq API Error:', errorData);
-      throw new Error(errorData.error?.message || 'Groq API error');
-    }
-
     const data = await response.json();
-    const reply = data.choices[0]?.message?.content || '죄송합니다, 답변을 생성할 수 없습니다.';
-
+    const reply = data.choices[0]?.message?.content || 
+      (isKorean ? '응답을 생성할 수 없습니다' : 'Could not generate response');
+    
     return res.status(200).json({ reply });
 
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ 
-      reply: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' 
+      reply: isKorean 
+        ? '오류가 발생했습니다. 다시 시도해주세요.' 
+        : 'An error occurred. Please try again.'
     });
   }
 }
