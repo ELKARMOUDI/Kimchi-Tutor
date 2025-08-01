@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>한국어 챗봇</title>
+        <title>Kimchi Tutor</title>
         <meta name="description" content="Korean language practice chatbot" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

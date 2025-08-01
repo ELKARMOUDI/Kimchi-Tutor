@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { v4 as uuidv4 } from 'uuid';
+import Link from "next/link";
 
 interface Message {
   id: string;
@@ -316,7 +317,7 @@ export default function ChatWindow() {
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-
+   
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col w-full">
       <header className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 shadow-lg">
@@ -331,7 +332,7 @@ export default function ChatWindow() {
               </button>
               
               {/* Cute Robot Logo */}
-              <div className="flex items-center space-x-3">
+              <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                 <div className="relative">
                   {/* Robot Head */}
                   <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center">
@@ -361,7 +362,7 @@ export default function ChatWindow() {
                     POCKET BUDDY
                   </p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </header>
