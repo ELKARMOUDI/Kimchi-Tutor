@@ -25,6 +25,10 @@ Learning a new language can feel overwhelming — Kimchi Tutor makes it easier w
 - **Vercel** for seamless deployment  
 
 ---
+## 📸 Preview
+
+![Tutor](https://github.com/user-attachments/assets/fc768027-3ed1-4822-a92c-90c2e8ea7967)
+
 
 
 
