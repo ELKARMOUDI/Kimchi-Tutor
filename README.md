@@ -1,4 +1,4 @@
-# 🥬 Kimchi Tutor — Your AI-Powered Korean Language Partner
+# :robot: Kimchi Tutor — Your AI-Powered Korean Language Partner
 
 [Live Demo ➝](https://kimchitutor.vercel.app)
 
