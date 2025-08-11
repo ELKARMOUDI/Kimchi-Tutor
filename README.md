@@ -12,8 +12,7 @@ Learning a new language can feel overwhelming — Kimchi Tutor makes it easier w
 
 ✅ Real-time, responsive AI chat  
 ✅ A simple, mobile-friendly interface  
-✅ Fast performance using modern tools  
-✅ Deployment-ready and scalable via Vercel  
+
 
 ---
 
