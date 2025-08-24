@@ -21,6 +21,8 @@ Learning a new language can feel overwhelming — Kimchi Tutor makes it easier w
 
 - **GROQ API** for lightning-fast AI responses  
 - **Next.js** for performance-first React architecture  
+- **Tailwind CSS** for clean, responsive design  
+
 
 ---
 ## 📸 Preview
