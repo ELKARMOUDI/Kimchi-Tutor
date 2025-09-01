@@ -24,6 +24,7 @@ Learning a new language can feel overwhelming — Kimchi Tutor makes it easier w
 - **Tailwind CSS** for clean, responsive design  
 - **Vercel** for seamless deployment  
 
+
 ---
 ## 📸 Preview
 
