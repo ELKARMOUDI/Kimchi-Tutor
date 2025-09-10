@@ -2,6 +2,7 @@
 
 [Live Demo ➝](https://kimchitutor.vercel.app)
 
+
 Kimchi Tutor is an AI-driven web app that helps users practice Korean through natural, contextual conversations. Whether you're a beginner or brushing up on your skills, Kimchi Tutor offers a friendly and intelligent chatbot experience tailored to language learners.
 
 ---
