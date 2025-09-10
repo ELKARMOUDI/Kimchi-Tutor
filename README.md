@@ -16,6 +16,7 @@ Learning a new language can feel overwhelming — Kimchi Tutor makes it easier w
 ✅ Deployment-ready and scalable via Vercel  
 
 
+
 ---
 
 ## 🧠 Powered By
